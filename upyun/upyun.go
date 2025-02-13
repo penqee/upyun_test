@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/bytedance/gopkg/util/logger"
+	"github.com/google/uuid"
 	"github.com/upyun/go-sdk/v3/upyun"
 )
 
@@ -19,7 +20,7 @@ func NewUpYun() {
 		&upyun.UpYunConfig{
 			Bucket:   "w2-domtok",
 			Operator: "penqee",
-			Password: "password",
+			Password: "operator-password",
 		},
 	)
 }
@@ -41,7 +42,7 @@ func uploadFile(src, dest string) error {
 
 func SaveFile(data []byte, tmpFile, destDir, filename string) error {
 
-	out, err := os.Create(filename)
+	out, err := os.Create(tmpFile + uuid.New().String() + filename)
 	if err != nil {
 		log.Println(err)
 		return err

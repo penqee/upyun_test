@@ -1,24 +1,27 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"filedir/upyun"
-	"io"
 	"io/ioutil"
 	"log"
 	"os"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
-	"github.com/google/uuid"
 )
 
 func main() {
 	h := server.Default()
 
 	h.POST("/ping", func(ctx context.Context, c *app.RequestContext) {
-		err := os.MkdirAll("tmp/", os.ModePerm)
+
+		const (
+			tempFile = "tmp/"
+			destDir  = "test/"
+		)
+
+		err := os.MkdirAll(tempFile, os.ModePerm)
 		if err != nil {
 			log.Println(err)
 			return
@@ -43,19 +46,7 @@ func main() {
 			return
 		}
 
-		osFile, err := os.Create("tmp/" + uuid.New().String() + file.Filename)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		_, err = io.Copy(osFile, bytes.NewReader(data))
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		upyun.SaveFile(data, "tmp/", "test/", osFile.Name())
+		upyun.SaveFile(data, tempFile, destDir, file.Filename)
 
 	})
 
