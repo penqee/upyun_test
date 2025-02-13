@@ -27,26 +27,41 @@ func main() {
 			return
 		}
 		upyun.NewUpYun()
-		file, err := c.FormFile("file")
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		src, err := file.Open()
-		if err != nil {
-			log.Println(err)
-			return
-		}
 
-		defer src.Close()
-
-		data, err := ioutil.ReadAll(src)
+		filess, err := c.MultipartForm()
 		if err != nil {
 			log.Println(err)
 			return
 		}
 
-		upyun.SaveFile(data, tempFile, destDir, file.Filename)
+		for index, file := range filess.File["file"] {
+			src, err := file.Open()
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			defer src.Close()
+			log.Println(index)
+			data, err := ioutil.ReadAll(src)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			upyun.SaveFile(data, tempFile, destDir, file.Filename)
+		}
+
+		// if  files, ok := filess.File["file"]; ok {
+
+		// 	// log.Println(index)
+		// 	// file, err := c.FormFile("file")
+		// 	// if err != nil {
+		// 	// 	log.Println(err)
+		// 	// 	return
+		// 	// }
+
+		// }
 
 	})
 
